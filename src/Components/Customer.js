@@ -1,5 +1,6 @@
 import React, { useEffect, useContext } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { Link } from "react-router-dom";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -8,8 +9,8 @@ import TableFooter from "@material-ui/core/TableFooter";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 import TableHead from "@material-ui/core/TableHead";
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
+import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
+import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
 import Switch from "@material-ui/core/Switch";
 import Paper from "@material-ui/core/Paper";
 import Pagination from "./Pagination";
@@ -36,7 +37,7 @@ const Customer = (props) => {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [sort, setSort] = React.useState("max");
   const [data, setData] = React.useState();
-  const { customers, getCustomers } = useContext(GlobalContext);
+  const { loading, customers, getCustomers } = useContext(GlobalContext);
 
   let emptyRows;
   const handleChangePage = (event, newPage) => {
@@ -139,12 +140,14 @@ const Customer = (props) => {
     getCustomers();
   }, []);
 
-  return (
+  return loading ? (
+      <div style={{textAlign:"center", marginTop:"100px"}}>loading .......</div>    
+  ) : (
     <TableContainer component={Paper}>
       <Table className={classes.table} aria-label="custom pagination table">
         <TableHead>
           <TableRow>
-            <StyledTableCell>Customer name (with avtar)</StyledTableCell>
+            <StyledTableCell>Customer name (with avtar) </StyledTableCell>
             <StyledTableCell align="center">Email</StyledTableCell>
             <StyledTableCell align="center">Phone</StyledTableCell>
             <StyledTableCell align="center">Premium</StyledTableCell>
@@ -152,7 +155,8 @@ const Customer = (props) => {
               align="center"
               onClick={(e) => setSort(sort === "max" ? "min" : "max")}
             >
-              Max/Min bid  {sort==="max"?<ArrowDropUpIcon/>:<ArrowDropDownIcon/>}
+              Max/Min bid{" "}
+              {sort === "max" ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
             </StyledTableCell>
             <StyledTableCell align="center"> Max/Min toggler</StyledTableCell>
           </TableRow>
@@ -164,20 +168,61 @@ const Customer = (props) => {
               : data
             ).map((row) => (
               <TableRow key={row.id}>
-                <TableCell component="th" style={{ width: 160 }} scope="row">
+                <TableCell
+                  component={Link}
+                  to={{
+                    pathname: "/bids",
+                    state: row,
+                  }}
+                  style={{ width: 160, textDecoration: "none" }}
+                  scope="row"
+                >
                   <img src={row.avatarUrl} width="80" height="80" alt="avtar" />
                   {row.firstname} {row.firstname}{" "}
                 </TableCell>
-                <TableCell style={{ width: 160 }} align="center">
+
+                <TableCell
+                  component={Link}
+                  to={{
+                    pathname: "/bids",
+                    state: row,
+                  }}
+                  style={{ width: 160, textDecoration: "none" }}
+                  align="center"
+                >
                   {row.email}
                 </TableCell>
-                <TableCell style={{ width: 160 }} align="center">
+                <TableCell
+                  component={Link}
+                  to={{
+                    pathname: "/bids",
+                    state: row,
+                  }}
+                  style={{ width: 160, textDecoration: "none" }}
+                  align="center"
+                >
                   {row.phone}
                 </TableCell>
-                <TableCell style={{ width: 160 }} align="center">
+                <TableCell
+                  component={Link}
+                  to={{
+                    pathname: "/bids",
+                    state: row,
+                  }}
+                  style={{ width: 160, textDecoration: "none" }}
+                  align="center"
+                >
                   {row.hasPremium ? "Premium" : "Not Premium"}
                 </TableCell>
-                <TableCell style={{ width: 160 }} align="center">
+                <TableCell
+                  component={Link}
+                  to={{
+                    pathname: "/bids",
+                    state: row,
+                  }}
+                  style={{ width: 160, textDecoration: "none" }}
+                  align="center"
+                >
                   {row.active
                     ? Math.max.apply(
                         Math,
@@ -192,6 +237,7 @@ const Customer = (props) => {
                         })
                       )}
                 </TableCell>
+
                 <TableCell style={{ width: 160 }} align="center">
                   <Switch
                     checked={row.active}
