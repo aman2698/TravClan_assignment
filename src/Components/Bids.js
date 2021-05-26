@@ -16,7 +16,6 @@ const useStyles = makeStyles({
   });
 const Bids = ({location}) => {
     const classes = useStyles();
-    console.log(location)
     return (
         <TableContainer component={Paper}>
         <Table className={classes.table} aria-label="simple table">
@@ -44,8 +43,5 @@ const Bids = ({location}) => {
     )
 }
 
-Bids.propTypes = {
-
-}
 
 export default Bids

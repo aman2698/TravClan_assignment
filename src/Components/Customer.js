@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 import Table from "@material-ui/core/Table";
@@ -15,8 +15,11 @@ import Switch from "@material-ui/core/Switch";
 import Paper from "@material-ui/core/Paper";
 import Pagination from "./Pagination";
 
+import { sortMin, sortMax } from "./helpers";
+//Contex Api
 import { GlobalContext } from "../Context/GlobalState";
 
+// Style
 const useStyles2 = makeStyles({
   table: {
     minWidth: 500,
@@ -31,15 +34,20 @@ const StyledTableCell = withStyles((theme) => ({
     fontSize: 14,
   },
 }))(TableCell);
-const Customer = (props) => {
+
+const Customer = () => {
   const classes = useStyles2();
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [sort, setSort] = React.useState("max");
-  const [data, setData] = React.useState();
+
+  //State
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [sort, setSort] = useState("max");
+  const [data, setData] = useState();
+
   const { loading, customers, getCustomers } = useContext(GlobalContext);
 
   let emptyRows;
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -49,81 +57,27 @@ const Customer = (props) => {
     setPage(0);
   };
 
+  // this is for toggler
   const isMaximum = (row) => {
+    //find index on the basis of id
     const condition = (element) => element.id === row.id;
     let index = data.findIndex(condition);
-
+    //create dublicate and update
     let newArr = [...data];
     newArr[index].active = !row.active;
     setData(newArr);
   };
+
   useEffect(() => {
-    if (data && sort == "min") {
+    if (data && sort === "min") {
       let objs = [...data];
-      objs.sort((a, b) =>
-        Math.max.apply(
-          Math,
-          a.bids.map(function (o) {
-            return o.amount;
-          })
-        ) >
-        Math.max.apply(
-          Math,
-          b.bids.map(function (o) {
-            return o.amount;
-          })
-        )
-          ? 1
-          : Math.max.apply(
-              Math,
-              b.bids.map(function (o) {
-                return o.amount;
-              })
-            ) >
-            Math.max.apply(
-              Math,
-              a.bids.map(function (o) {
-                return o.amount;
-              })
-            )
-          ? -1
-          : 0
-      );
-      setData(objs);
+      setData(sortMin(objs));
     } else if (data && sort === "max") {
       let objs = [...data];
-      objs.sort((a, b) =>
-        Math.max.apply(
-          Math,
-          a.bids.map(function (o) {
-            return o.amount;
-          })
-        ) <
-        Math.max.apply(
-          Math,
-          b.bids.map(function (o) {
-            return o.amount;
-          })
-        )
-          ? 1
-          : Math.max.apply(
-              Math,
-              b.bids.map(function (o) {
-                return o.amount;
-              })
-            ) <
-            Math.max.apply(
-              Math,
-              a.bids.map(function (o) {
-                return o.amount;
-              })
-            )
-          ? -1
-          : 0
-      );
-      setData(objs);
+      setData(sortMax(objs));
     }
   }, [sort]);
+
   useEffect(() => {
     emptyRows =
       rowsPerPage -
@@ -131,17 +85,19 @@ const Customer = (props) => {
         rowsPerPage,
         (customers && customers.length) - page * rowsPerPage
       );
-    customers.forEach(function (element) {
-      element.active = true;
-    });
+    customers.forEach((element) => (element.active = true));
     setData(customers);
   }, [customers]);
+
+  // Call api
   useEffect(() => {
     getCustomers();
   }, []);
 
   return loading ? (
-      <div style={{textAlign:"center", marginTop:"100px"}}>loading .......</div>    
+    <div style={{ textAlign: "center", marginTop: "100px" }}>
+      loading .......
+    </div>
   ) : (
     <TableContainer component={Paper}>
       <Table className={classes.table} aria-label="custom pagination table">
