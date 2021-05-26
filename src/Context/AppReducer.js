@@ -5,7 +5,7 @@ export default (state, action) => {
         return {
           ...state,
           loading: false,
-          customer: payload
+          customers: payload
         };
 
         case "CUSTOMER_ERROR":

@@ -5,7 +5,7 @@ import axios from "axios";
 
 // Initial state
 const initialState = {
-  customer: [],
+  customers: [],
   error: null,
   loading: true
 };
@@ -40,7 +40,7 @@ export const GlobalProvider = ({ children }) => {
   return (
     <GlobalContext.Provider
       value={{
-        customer: state.customer,
+        customers: state.customers,
         error: state.error,
         loading: state.loading,
         getCustomers,
